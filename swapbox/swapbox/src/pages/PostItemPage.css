@@ -1,0 +1,113 @@
+.post-page {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.post-form {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.photo-upload-area {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.photo-upload-placeholder {
+  aspect-ratio: 1;
+  border: 2px dashed var(--border-active);
+  border-radius: var(--radius-sm);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.15s;
+  grid-column: span 2;
+  grid-row: span 2;
+}
+.photo-upload-placeholder:hover {
+  border-color: var(--pink);
+  color: var(--pink);
+  background: rgba(255,45,120,0.04);
+}
+.photo-sub {
+  font-size: 10px;
+  color: var(--text-muted);
+  letter-spacing: 0.3px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.form-hint {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  align-self: flex-end;
+}
+
+.form-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.condition-options {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding-bottom: 2px;
+}
+.condition-options::-webkit-scrollbar { display: none; }
+
+.condition-btn {
+  padding: 8px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  background: var(--bg-elevated);
+  transition: all 0.15s;
+  font-family: var(--font-mono);
+}
+.condition-btn.active {
+  background: rgba(200,255,0,0.1);
+  border-color: var(--lime);
+  color: var(--lime);
+}
+.condition-btn:hover:not(.active) {
+  border-color: var(--border-active);
+  color: var(--text-primary);
+}
+
+.btn-primary:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none !important;
+}
