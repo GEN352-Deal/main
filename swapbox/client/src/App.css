@@ -1,0 +1,82 @@
+/* App Shell Base Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: #000;
+  color: #fff;
+  overflow-x: hidden;
+}
+
+.app-shell {
+  min-height: 100vh;
+  background: #000;
+  color: #fff;
+  padding-bottom: max(80px, calc(80px + env(safe-area-inset-bottom)));
+  position: relative;
+}
+
+/* Page Container สำหรับหน้าต่างๆ */
+.page-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  min-height: calc(100vh - 80px);
+}
+
+/* สำหรับ Community Feed และ Profile pages */
+.feed-container,
+.profile-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px 20px 100px 20px; /* เพิ่ม padding-bottom ให้มากขึ้น */
+}
+
+/* Scrollbar Styles */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0a0a0a;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #444;
+}
+
+/* ปรับ safe area สำหรับ iOS */
+@supports (padding: max(0px)) {
+  .app-shell {
+    padding-bottom: max(80px, calc(80px + env(safe-area-inset-bottom)));
+  }
+  
+  .page-container,
+  .feed-container,
+  .profile-container {
+    padding-bottom: max(100px, calc(100px + env(safe-area-inset-bottom)));
+  }
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .page-container,
+  .feed-container,
+  .profile-container {
+    padding: 16px;
+  }
+}
