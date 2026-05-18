@@ -1,149 +1,178 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import TopBar from '../components/layout/TopBar';
-import { CATEGORIES } from '../data/mockData';
-import './PostItemPage.css';
-
-const CONDITIONS = ['Brand New', 'Like New', 'Good', 'Fair', 'Poor'];
 
 export default function PostItemPage() {
   const navigate = useNavigate();
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [category, setCategory] = useState('');
-  const [condition, setCondition] = useState('');
-  const [wantInExchange, setWantInExchange] = useState('');
-  const [submitted, setSubmitted] = useState(false);
+  const fileInputRef = useRef(null);
+  
+  // States สำหรับเก็บข้อมูลโพสต์
+  const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
+  const [caption, setCaption] = useState('');
+  const [taggedUsers, setTaggedUsers] = useState([]);
+  const [location, setLocation] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = () => {
-    if (!title || !category || !condition) return;
-    setSubmitted(true);
-    setTimeout(() => navigate('/profile'), 2000);
+  // 1. ฟังก์ชันจัดการอัปโหลดรูปภาพ
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImageFile(file);
+      setImagePreview(URL.createObjectURL(file)); 
+    }
   };
 
-  if (submitted) {
-    return (
-      <div style={{ display: 'flex', flexDirection: 'column', height: '100%', alignItems: 'center', justifyContent: 'center', gap: 16, padding: 24 }}>
-        <div style={{ fontSize: 72 }}>🎉</div>
-        <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 28, letterSpacing: 1, textAlign: 'center' }}>
-          ITEM POSTED!
-        </h2>
-        <p style={{ color: 'var(--text-secondary)', textAlign: 'center' }}>
-          Your item is now live. Wait for matches and start swapping!
-        </p>
-      </div>
-    );
-  }
+  // 2. ฟังก์ชันจัดการ Tag ผู้คน
+  const handleTagPeople = () => {
+    const username = prompt("ระบุชื่อผู้ใช้ที่ต้องการ Tag (เช่น @jordan):");
+    if (username) {
+      setTaggedUsers([...taggedUsers, username]);
+    }
+  };
+
+  // 3. ฟังก์ชันดึงพิกัด Location (GPS)
+  const handleGetLocation = () => {
+    if (navigator.geolocation) {
+      setLoading(true);
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const lat = position.coords.latitude.toFixed(4);
+          const lng = position.coords.longitude.toFixed(4);
+          setLocation(`Lat: ${lat}, Lng: ${lng}`);
+          setLoading(false);
+        },
+        (error) => {
+          alert("ไม่สามารถเข้าถึงตำแหน่งที่ตั้งได้ กรุณาเปิดการเข้าถึง GPS");
+          setLoading(false);
+        }
+      );
+    } else {
+      alert("เบราว์เซอร์ของคุณไม่รองรับการดึงตำแหน่งที่ตั้ง");
+    }
+  };
+
+  // 4. ฟังก์ชันกดปุ่ม Share (ส่งข้อมูลไป Backend)
+  const handleShare = async () => {
+    if (!imageFile) return alert('กรุณาอัปโหลดรูปภาพก่อนแชร์');
+    
+    setLoading(true);
+    
+    // โค้ดสำหรับส่งข้อมูลไปยัง Backend (FormData)
+    const formData = new FormData();
+    formData.append('image', imageFile);
+    formData.append('caption', caption);
+    formData.append('location', location);
+    formData.append('tagged_users', JSON.stringify(taggedUsers));
+
+    try {
+      // ของจริงจะใช้ fetch POST แบบนี้:
+      // await fetch('http://localhost:3001/api/items', { method: 'POST', body: formData });
+      
+      console.log('ข้อมูลพร้อมส่งไป Backend:', { imageFile, caption, location, taggedUsers });
+      
+      // จำลองดีเลย์การอัปโหลดให้ดูสมจริง (Mock)
+      await new Promise(resolve => setTimeout(resolve, 1200));
+      
+      alert('แชร์โพสต์สำเร็จ!');
+      navigate('/feed'); // แชร์เสร็จเด้งกลับไปหน้า Feed
+    } catch (error) {
+      console.error(error);
+      alert('เกิดข้อผิดพลาดในการแชร์โพสต์');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <div className="post-page">
-      <TopBar title="Post Item" showBack />
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', background: 'var(--bg-base, #121212)', color: 'white' }}>
+      {/* แถบด้านบน */}
+      <TopBar title="New post" showBack={true} />
 
-      <div className="page-content">
-        <div className="post-form">
-
-          {/* Photo upload */}
-          <div className="photo-upload-area">
-            <div className="photo-upload-placeholder">
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="1.5">
-                <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/>
-                <path d="M21 15l-5-5L5 21"/>
-              </svg>
-              <span>Add Photos</span>
-              <span className="photo-sub">Up to 6 photos</span>
+      {/* พื้นที่เนื้อหาที่เลื่อนได้ */}
+      <div style={{ flex: 1, overflowY: 'auto', padding: '16px' }}>
+        
+        {/* ส่วนอัปโหลดรูปภาพ */}
+        <div 
+          onClick={() => fileInputRef.current.click()}
+          style={{
+            width: '100%',
+            aspectRatio: '1',
+            background: 'var(--bg-elevated, #1A1A1A)',
+            borderRadius: '12px',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            marginBottom: '16px',
+            overflow: 'hidden',
+            cursor: 'pointer',
+            border: '1px dashed var(--border-color, #333)'
+          }}
+        >
+          {imagePreview ? (
+            <img src={imagePreview} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          ) : (
+            <div style={{ color: 'var(--text-muted, #888)', textAlign: 'center' }}>
+              <div style={{ fontSize: '32px', marginBottom: '8px' }}>📸</div>
+              <span>แตะเพื่อเพิ่มรูปภาพ</span>
             </div>
-          </div>
-
-          {/* Form fields */}
-          <div className="form-group">
-            <label className="form-label">Item Title *</label>
-            <input
-              type="text"
-              className="input-field"
-              placeholder="e.g. Sony WH-1000XM5 Headphones"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              maxLength={60}
-            />
-            <span className="form-hint">{title.length}/60</span>
-          </div>
-
-          <div className="form-group">
-            <label className="form-label">Description</label>
-            <textarea
-              className="input-field"
-              placeholder="Describe your item's condition, any defects, what's included..."
-              rows={4}
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              style={{ resize: 'none' }}
-            />
-          </div>
-
-          <div className="form-group">
-            <label className="form-label">Category *</label>
-            <div className="form-chips">
-              {CATEGORIES.filter(c => c.id !== 'all').map((cat) => (
-                <button
-                  key={cat.id}
-                  className={`chip ${category === cat.id ? 'active' : ''}`}
-                  onClick={() => setCategory(cat.id)}
-                >
-                  {cat.emoji} {cat.label}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="form-group">
-            <label className="form-label">Condition *</label>
-            <div className="condition-options">
-              {CONDITIONS.map((c) => (
-                <button
-                  key={c}
-                  className={`condition-btn ${condition === c ? 'active' : ''}`}
-                  onClick={() => setCondition(c)}
-                >
-                  {c}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="form-group">
-            <label className="form-label">Looking to swap for</label>
-            <input
-              type="text"
-              className="input-field"
-              placeholder="e.g. Camera, iPad, Laptop (comma separated)"
-              value={wantInExchange}
-              onChange={(e) => setWantInExchange(e.target.value)}
-            />
-            <span className="form-hint">List items you'd accept in exchange</span>
-          </div>
-
-          <div className="form-group">
-            <label className="form-label">Also post as auction?</label>
-            <div style={{ display: 'flex', gap: 10 }}>
-              <button
-                className="btn-secondary"
-                style={{ flex: 1, fontSize: 13 }}
-                onClick={() => navigate('/auction')}
-              >
-                🔨 Create Auction
-              </button>
-            </div>
-          </div>
-
-          <button
-            className="btn-primary"
-            onClick={handleSubmit}
-            style={{ marginTop: 8 }}
-            disabled={!title || !category || !condition}
-          >
-            Post Item for Swap
-          </button>
+          )}
         </div>
+        {/* ซ่อน Input type file เอาไว้ให้ทำงานเบื้องหลัง */}
+        <input type="file" accept="image/*" ref={fileInputRef} onChange={handleImageUpload} style={{ display: 'none' }} />
+
+        {/* ส่วนพิมพ์แคปชั่น */}
+        <textarea
+          placeholder="Add a caption..."
+          value={caption}
+          onChange={(e) => setCaption(e.target.value)}
+          style={{ 
+            width: '100%', background: 'transparent', border: 'none', color: 'white', 
+            fontSize: '15px', minHeight: '60px', outline: 'none', marginBottom: '24px', resize: 'none', fontFamily: 'inherit'
+          }}
+        />
+
+        {/* เมนูตัวเลือกต่างๆ (Tag, Location, Audio) */}
+        <div style={{ background: 'var(--bg-elevated, #1A1A1A)', borderRadius: '12px', overflow: 'hidden' }}>
+          
+          <button style={{ width: '100%', padding: '16px', background: 'transparent', border: 'none', borderBottom: '1px solid var(--border-color, #333)', color: 'white', display: 'flex', alignItems: 'center', gap: '12px', cursor: 'not-allowed', textAlign: 'left', opacity: 0.5 }}>
+            <span style={{ fontSize: '20px' }}>🎵</span> Add audio (Coming soon)
+          </button>
+          
+          <button onClick={handleTagPeople} style={{ width: '100%', padding: '16px', background: 'transparent', border: 'none', borderBottom: '1px solid var(--border-color, #333)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer', textAlign: 'left' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <span style={{ fontSize: '20px' }}>👤</span> Tag people
+            </div>
+            {taggedUsers.length > 0 && <span style={{ color: 'var(--primary, #FF4D4F)', fontSize: '13px' }}>{taggedUsers.length} people</span>}
+          </button>
+          
+          <button onClick={handleGetLocation} style={{ width: '100%', padding: '16px', background: 'transparent', border: 'none', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer', textAlign: 'left' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <span style={{ fontSize: '20px' }}>📍</span> Add location
+            </div>
+            {location && <span style={{ color: 'var(--primary, #FF4D4F)', fontSize: '13px', maxWidth: '120px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{location}</span>}
+          </button>
+          
+        </div>
+      </div>
+
+      {/* ปุ่ม Share ด้านล่างสุด (Sticky) */}
+      <div style={{ padding: '16px', borderTop: '1px solid var(--border-color, #333)', background: 'var(--bg-base, #121212)', paddingBottom: 'calc(16px + env(safe-area-inset-bottom))' }}>
+        <button
+          onClick={handleShare}
+          disabled={!imageFile || loading}
+          style={{ 
+            width: '100%', padding: '14px', 
+            background: imageFile ? 'linear-gradient(135deg, var(--pink, #FF2D78), var(--purple, #5D00FF))' : '#333', 
+            color: imageFile ? 'white' : '#888', 
+            border: 'none', borderRadius: '24px', fontSize: '16px', fontWeight: 'bold', 
+            cursor: imageFile ? 'pointer' : 'not-allowed',
+            transition: 'all 0.2s',
+            boxShadow: imageFile ? '0 4px 12px rgba(255, 45, 120, 0.3)' : 'none'
+          }}
+        >
+          {loading ? 'กำลังแชร์...' : 'Share'}
+        </button>
       </div>
     </div>
   );
