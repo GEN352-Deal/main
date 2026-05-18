@@ -3,6 +3,7 @@ import TopBar from '../components/layout/TopBar';
 import { FEED_POSTS } from '../data/mockData';
 import './FeedPage.css';
 
+
 const TYPE_COLORS = {
   wanted: { label: 'WTT', class: 'badge-purple' },
   giveaway: { label: 'FREE', class: 'badge-lime' },
