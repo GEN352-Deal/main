@@ -24,6 +24,31 @@ export default function HomePage() {
   const cardRef = useRef(null);
   const startXRef = useRef(0);
 
+  // ── Apply filters whenever category or distance changes ──────────────────
+  const applyFilters = () => {
+    const filtered = SWAP_ITEMS.filter((item) => {
+      const categoryMatch = selectedCategory === 'all' || item.category === selectedCategory;
+      const distanceMatch = item.distance <= maxDistance;
+      return categoryMatch && distanceMatch;
+    });
+    setItems(filtered);
+    setCurrentIndex(0); // reset deck ใหม่ทุกครั้งที่ filter
+    setShowFilter(false);
+  };
+
+  // sync chips บน category strip (ไม่ต้องกด Apply)
+  useEffect(() => {
+    if (!showFilter) {
+      const filtered = SWAP_ITEMS.filter((item) => {
+        const categoryMatch = selectedCategory === 'all' || item.category === selectedCategory;
+        const distanceMatch = item.distance <= maxDistance;
+        return categoryMatch && distanceMatch;
+      });
+      setItems(filtered);
+      setCurrentIndex(0);
+    }
+  }, [selectedCategory]);
+
   const current = items[currentIndex];
   const nextItem = items[currentIndex + 1];
 
@@ -261,7 +286,7 @@ export default function HomePage() {
               </div>
             </div>
 
-            <button className="btn-primary" onClick={() => setShowFilter(false)}>
+            <button className="btn-primary" onClick={applyFilters}>
               Apply Filters
             </button>
           </div>

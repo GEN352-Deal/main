@@ -10,7 +10,7 @@ import ExchangePage from './pages/ExchangePage';
 import SettingsPage from './pages/SettingsPage';
 
 // Pages that hide the bottom nav
-const HIDE_NAV = ['/exchange', '/settings'];
+const HIDE_NAV = ['/exchange', '/settings', '/feed'];
 
 function AppShell() {
   const location = useLocation();
