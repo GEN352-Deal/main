@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: deal-client
+    ports:
+      - "5173:5173" # พอร์ตเริ่มต้นของ React Vite
+    volumes:
+      - ./client:/app
+      - /app/node_modules
+    environment:
+      - CHOKIDAR_USEPOLLING=true # สำหรับให้ Hot Reload ทำงานใน Docker
+    depends_on:
+      - server
+
+  server:
+    build:
+      context: ./sever # ใช้ชื่อโฟลเดอร์ sever ตามโครงสร้างของคุณ
+      dockerfile: Dockerfile
+    container_name: deal-server
+    ports:
+      - "3001:3001" # อ้างอิงจากไฟล์ index.js ของคุณที่ใช้พอร์ต 3001
+    volumes:
+      - ./sever:/app
+      - /app/node_modules
+    env_file:
+      - ./sever/.env.example

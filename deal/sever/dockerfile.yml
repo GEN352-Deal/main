@@ -1,0 +1,19 @@
+# ใช้ Node.js version 18-alpine
+FROM node:18-alpine
+
+WORKDIR /app
+
+# ก๊อปปี้ package.json และ yarn.lock มาก่อน
+COPY package.json yarn.lock ./
+
+# ติดตั้งแพ็กเกจด้วย yarn
+RUN yarn install
+
+# ก๊อปปี้โค้ดทั้งหมดตามเข้าไป
+COPY . .
+
+# เปิดพอร์ต 3001
+EXPOSE 3001
+
+# รันแอปด้วยคำสั่ง start ตามที่ตั้งไว้ใน package.json
+CMD ["yarn", "start"]
