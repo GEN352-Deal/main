@@ -120,9 +120,9 @@ deal-backend/
 
 ```bash
 cd deal-backend
-npm install
+yarn install
 cp .env.example .env   # ใส่ Supabase keys
-npm run dev            # runs on http://localhost:3001
+yarn run dev            # runs on http://localhost:3001
 ```
 
 ### Environment Variables
