@@ -20,12 +20,12 @@ cd deal
 
 2. **Install dependencies**
 ```bash
-npm install
+yarn install
 ```
 
 3. **Start the dev server**
 ```bash
-npm run dev
+yarn run dev
 ```
 
 4. **Open in browser**
