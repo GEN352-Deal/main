@@ -20,12 +20,23 @@ import ThaiDMock from './pages/ThaiDMock';
 // ── Main Shell ──
 function AppShell() {
   return (
-    <div 
-      className="app-shell" 
+    <div
+      className="app-shell"
       style={{ display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden' }}
     >
-      {/* เพิ่ม div ครอบ Routes เพื่อให้ส่วนเนื้อหา Scroll ได้โดยไม่ดัน BottomNav ตกจอ */}
-      <div className="main-content" style={{ flex: 1, overflowY: 'auto', paddingBottom: '20px' }}>
+      {/*
+        main-content: ใช้ overflow: hidden เพื่อให้แต่ละ page จัดการ scroll เอง
+        ไม่ใช้ overflowY: auto เพราะจะซ้อน scroll layer กับ page-content ข้างใน
+        ไม่ต้องมี paddingBottom เพราะ BottomNav อยู่ใน flex flow แล้ว (ไม่ได้ fixed)
+      */}
+      <div
+        className="main-content"
+        style={{
+          flex: 1,
+          overflow: 'hidden',
+          position: 'relative',
+        }}
+      >
         <Routes>
           {/* Public routes */}
           <Route path="/login" element={<LoginPage />} />
@@ -43,8 +54,8 @@ function AppShell() {
           <Route path="/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
         </Routes>
       </div>
-      
-      {/* BottomNav จะถูกล็อคติดอยู่ด้านล่างเสมอ */}
+
+      {/* BottomNav อยู่ใน flex flow → ไม่บัง content ด้านบนโดยอัตโนมัติ */}
       <BottomNav />
     </div>
   );

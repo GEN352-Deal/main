@@ -4,6 +4,11 @@
   height: 100%;
 }
 
+/* เผื่อระยะ bottom nav bar ไม่ให้ chat list โดนบัง */
+.chat-list-page .page-content {
+  padding-bottom: 80px;
+}
+
 .chat-search-wrap {
   padding: 12px 16px 4px;
 }
