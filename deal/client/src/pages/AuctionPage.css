@@ -4,6 +4,11 @@
   height: 100%;
 }
 
+/* เผื่อระยะ bottom nav bar ไม่ให้ content โดนบัง */
+.auction-page .page-content {
+  padding-bottom: 80px;
+}
+
 .auction-tabs {
   display: flex;
   border-bottom: 1px solid var(--border);

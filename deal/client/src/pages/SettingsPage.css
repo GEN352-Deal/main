@@ -4,6 +4,11 @@
   height: 100%;
 }
 
+/* เผื่อระยะ bottom nav bar ไม่ให้ content โดนบัง */
+.settings-page .page-content {
+  padding-bottom: 80px;
+}
+
 .settings-user-card {
   display: flex;
   align-items: center;
