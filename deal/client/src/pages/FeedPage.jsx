@@ -4,6 +4,14 @@ import BottomNav from '../components/layout/BottomNav';
 import { AUCTIONS } from '../data/mockData';
 import './FeedPage.css';
 
+// ส่วนนี้มาจาก branch ของคุณ (thaid)
+const TYPE_COLORS = {
+  wanted: { label: 'WTT', class: 'badge-purple' },
+  giveaway: { label: 'FREE', class: 'badge-lime' },
+  offer: { label: 'OFFER', class: 'badge-pink' },
+};
+
+// ส่วนนี้มาจาก branch main
 // Custom Hook สำหรับทำเวลานับถอยหลังการประมูลแบบ Real-time
 function useCountdown(endTime) {
   const [timeLeft, setTimeLeft] = useState('');
@@ -27,6 +35,7 @@ function useCountdown(endTime) {
 
 // Component ตัวการ์ดรายการประมูลแต่ละชิ้น
 function AuctionCard({ auction, onBid }) {
+// ... (โค้ดส่วนที่เหลือด้านล่างปล่อยไว้เหมือนเดิมครับ) ...
   const timeLeft = useCountdown(auction.endTime);
   const urgent = (auction.endTime - Date.now()) < 2 * 3600000; // เช็กว่าเหลือน้อยกว่า 2 ชม. ไหม (จะขึ้นไฟลุก)
 
